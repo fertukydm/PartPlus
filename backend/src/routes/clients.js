@@ -1,17 +1,18 @@
 import express from "express";
-import employeeController from "../controllers/employeeControllers.js";
+import reservationController from "../controllers/reservationController.js";
+import clientController from "../controllers/clientController.js";
 // Router() nos ayuda a colocar los metodos
 // que tendra mi ruta
 const router = express.Router();
 
 router
   .route("/")
-  .get(clientController.get)
-  .post(employeeController.createemployee);
+  .get(clientController.getclient)
+  .post(clientController.createclient);
 
 router
   .route("/:id")
-  .put(employeeController.updateemployee)
-  .delete(employeeController.deleteemployee);
+  .put(clientController.updateClient)
+  .delete(clientController.deleteclient);
 
 export default router;

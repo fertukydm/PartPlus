@@ -19,6 +19,7 @@ clientController.createclient = async (req, res) => {
         phone,
         age,
     } = req.body;
+
   
     //2- Guardo los valores en la base de datos
     const clientController = new clientModel({

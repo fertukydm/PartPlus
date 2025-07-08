@@ -7,7 +7,7 @@
 
 import { model, Schema } from "mongoose";
 
-const salesSchema = new Schema(
+const cientSchema = new Schema(
   {
     name: {
       type: String,
@@ -36,4 +36,4 @@ const salesSchema = new Schema(
   }
 );
 
-export default model("sales", salesSchema);
+export default model("client", cientSchema);

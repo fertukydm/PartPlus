@@ -93,7 +93,7 @@ reservationController.getBestSelledProducts = async (req, res) => {
 // =====================
 // Ganancias totales
 // =====================
-reservationController.totalEarnings = async (req, res) => {
+reservationController.totalReservation = async (req, res) => {
   try {
     const resultado = await reservationModel.aggregate([
       {
