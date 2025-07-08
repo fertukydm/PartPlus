@@ -1,5 +1,4 @@
 import express from "express";
-import reservationController from "../controllers/reservationController.js";
 import clientController from "../controllers/clientController.js";
 // Router() nos ayuda a colocar los metodos
 // que tendra mi ruta

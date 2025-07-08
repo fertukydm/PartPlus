@@ -1,5 +1,5 @@
-const mongoose = require('mongoose');
-const validator = require('validator');
+import jsonwebtoken from "jsonwebtoken";
+import { config } from "../config.js";
 
 // Validación para clientes
 const validateClient = (req, res, next) => {
@@ -30,6 +30,7 @@ const validateClient = (req, res, next) => {
   if (!age || typeof age !== 'number' || age < 18 || age > 120) {
     errors.push('La edad debe estar entre 18 y 120 años');
   }
+  
 
   if (errors.length > 0) {
     return res.status(400).json({ 

@@ -1,7 +1,7 @@
 import express from "express";
-import productsRoutes from "./src/routes/clients.js";
-import customersRoutes from "./src/routes/reservations.js";
-import { validateAuthToken } from "./src/middlewares/validateAuthToken.js";
+import clientsRouter from "./src/routes/clients.js";
+import reservationRouter from "./src/routes/reservations.js";
+import { validateAuthToken } from "./src/middleware/validateAuthToken.js";
 import cors from "cors";
 
 const app = express();
@@ -21,6 +21,10 @@ app.use(cookieParser());
 // Definir las rutas de las funciones que tendr á la página web
 app.use("/api/client", clientsRouter);
 app.use("/api/reservation", reservationRouter);
-
+app.use(
+  "/api/reservation",
+  validateAuthToken(["vehicle", "service"]),
+  reservationRouter
+);
 
 export default app;
