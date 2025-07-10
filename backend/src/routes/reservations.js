@@ -4,16 +4,13 @@ import reservationController from "../controllers/reservationController.js";
 const router = express.Router();
 
 router.route("/")
-  .get(reservationController.getAllreservation)
-  .post(reservationController.insertreservation);
+  .get(reservationController.getreservation)
+  .post(reservationController.registerReservation);
 
-router.route("/getReservationByCategory")
-.get(reservationController.getReservationByCategory);
-
-router.route("/getBestSelledProducts")
-  .get(reservationController.getBestSelledProducts);
-
-router.route("/totalReservation")
-.get(reservationController.totalReservation);
+router
+    .route("/:id")
+    .get(reservationsController.getReservationID)  
+    .put(reservationsController.updateReservation)  
+    .delete(reservationsController.deleteReservation);  
 
 export default router;

@@ -7,7 +7,7 @@
 
 import { model, Schema } from "mongoose";
 
-const cientSchema = new Schema(
+const clientSchema = new Schema(
   {
     name: {
       type: String,
@@ -36,4 +36,4 @@ const cientSchema = new Schema(
   }
 );
 
-export default model("client", cientSchema);
+export default model("client", clientSchema);

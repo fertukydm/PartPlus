@@ -7,7 +7,7 @@ const router = express.Router();
 router
   .route("/")
   .get(clientController.getclient)
-  .post(clientController.createclient);
+  .post(clientController.registerClients);
 
 router
   .route("/:id")
