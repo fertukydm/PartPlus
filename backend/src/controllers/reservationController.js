@@ -1,10 +1,33 @@
-import reservationModel from "../models/reservation.js";
-
-//Array de funciones vacías
 const reservationController = {};
+import reservationModel from "../models/reservation.js";
+import mongoose from "mongoose";
+
+const isValidObjectId = (id) => mongoose.Types.ObjectId.isValid(id);
+
+// Obtener una reservación por su ID
+reservationsController.getReservationID = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ message: "ID inválido" });
+    }
+
+    const client = await reservationsModel.findById(id);
+
+    if (!client) {
+      return res.status(404).json({ message: "Reservación no encontrada" });
+    }
+
+    return res.status(200).json(client);
+  } catch (error) {
+    console.error("Error al obtener la reservación:", error);
+    return res.status(500).json({ message: "Error al obtener la reservación" });
+  }
+};
 
 //Select
-reservationController.getAllreservation = async (req, res) => {
+reservationController.getreservation = async (req, res) => {
   try {
     const sales = await reservationModel.find();
     res.status(200).json(sales);
@@ -14,101 +37,78 @@ reservationController.getAllreservation = async (req, res) => {
   }
 };
 
-// Insert
-reservationController.insertreservation = async (req, res) => {
-  try {
-    //Solicitar los datos
-    const { clientId, vehicle, service, status } = req.body;
+reservationController.registerReservation = async (req, res) => {
+  const { clientId, vehicle, service, status } = req.body;
 
-    if (total < 0) {
-      return res.status(400).json({ message: "Insert valid reservation" });
+  try {
+    if (!clientId || !vehicle || !service || !status) {
+      return res.status(400).json({ message: "Complete todos los campos." });
     }
 
-    //Guardamos en la base de datos
-    const newReservation = new reservationModel({ clientId, vehicle, service, status });
+    if (!isValidObjectId(clientId)) {
+      return res.status(400).json({ message: "ID de cliente no válido." });
+    }
+
+    const newReservation = new reservationModel({
+      clientId,
+      vehicle,
+      service,
+      status,
+    });
+
     await newReservation.save();
 
-    res.status(200).json({ message: "Sale saved" });
+    res.status(201).json({ message: "Reserva registrada" });
   } catch (error) {
-    console.log("error" + error);
-    res.status(500).json({ message: "Internal server error" });
+    console.error(error);
+    res.status(500).json({ message: "Error al registrar reserva." });
   }
 };
-
-// =================================
-// Ventas que tiene cada categoria
-// =================================
-
-reservationController.getReservationByCategory = async (req, res) => {
+reservationController.deleteReservation = async (req, res) => {
   try {
-    const resultado = await reservationModel.aggregate([
-      {
-        $group: {
-          _id: "$category",
-          totalventas: { $sum: "$total" },
-        },
-      },
-      //ordenar
-      {
-        $sort: { totalventas: -1 },
-      },
-    ]);
-
-    res.status(200).json(resultado);
+    const deleted = await reservationModel.findByIdAndDelete(req.params.id);
+    if (!deleted) {
+      return res.status(404).json({ message: "Reserva no encontrada." });
+    }
+    res.json({ message: "Reserva eliminada" });
   } catch (error) {
-    console.log("error" + error);
-    res.status(500).json({ message: "Internal server error" });
+    console.error("Error al eliminar la reserva:", error);
+    res.status(500).json({ message: "Error eliminando reserva." });
   }
 };
 
-// =======================
-// Productos más vendidos
-// =======================
-reservationController.getBestSelledProducts = async (req, res) => {
+// PUT - Actualizar reserva por ID
+reservationController.updateReservation = async (req, res) => {
   try {
-    const resultado = await salesModel.aggregate([
-      {
-        $group: {
-          _id: "$product",
-          totalventas: { $sum: 1 },
-        },
-      },
-      //Ordenar
-      {
-        $sort: { totalventas: -1 },
-      },
-      //Limitar la cantidad de datos a mostrar
-      {
-        $limit: 3,
-      },
-    ]);
+    const { clientId, vehicle, service, status } = req.body;
 
-    res.status(200).json(resultado);
+    if (!clientId || !vehicle || !service || !status) {
+      return res.status(400).json({ message: "Complete todos los campos." });
+    }
+
+    if (!isValidObjectId(clientId)) {
+      return res.status(400).json({ message: "ID de cliente no válido." });
+    }
+
+    const updated = await reservationModel.findByIdAndUpdate(
+      req.params.id,
+      {
+        clientId,
+        vehicle,
+        service,
+        status,
+      },
+      { new: true }
+    );
+
+    if (!updated) {
+      return res.status(404).json({ message: "Reserva no encontrada." });
+    }
+
+    res.json({ message: "Reserva actualizada con éxito.", updated });
   } catch (error) {
-    console.log("error" + error);
-    res.status(500).json({ message: "Internal server error" });
+    console.error("Error actualizando reserva:", error);
+    res.status(500).json({ message: "Error actualizando reserva." });
   }
 };
-
-// =====================
-// Ganancias totales
-// =====================
-reservationController.totalReservation = async (req, res) => {
-  try {
-    const resultado = await reservationModel.aggregate([
-      {
-        $group: {
-          _id: null,
-          gananciasTotales: { $sum: "$total" },
-        },
-      },
-    ]);
-
-    res.status(200).json(resultado);
-  } catch (error) {
-    console.log("error" + error);
-    res.status(500).json({ message: "Internal server error" });
-  }
-};
-
 export default reservationController;
